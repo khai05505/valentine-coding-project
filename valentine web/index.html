@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dimzly — Valentine's Website</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #ffe6f0, #ffb6c9, #ff8fab);
+  color: #4a1f2d;
+  overflow-x: hidden;
+}
+
+.story {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 18px;
+}
+
+.panel {
+  max-width: 980px;
+  width: 100%;
+  background: rgba(255,255,255,0.93);
+  backdrop-filter: blur(16px);
+  border-radius: 28px;
+  box-shadow: 0 20px 55px rgba(255, 92, 138, 0.35);
+  display: none;
+  grid-template-columns: 1.1fr 1fr;
+  overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+
+.panel.active {
+  display: grid;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.left { padding: 36px; }
+
+.right {
+  background: linear-gradient(135deg, #ffd6e5, #ff9ebb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+h1 { font-size: 28px; margin-bottom: 8px; }
+p { font-size: 15px; line-height: 1.7; margin-bottom: 12px; }
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #ff5c8a, #ff8fab);
+  color: white;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: 0.18s ease;
+}
+
+button:hover { transform: scale(1.06); }
+
+/* Chat */
+.chat-box {
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.msg {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.me {
+  background: #ff8fab;
+  color: white;
+  margin-left: auto;
+}
+
+.him {
+  background: #f3f3f3;
+  color: #333;
+}
+
+/* Countdown */
+.countdown {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Floating hearts */
+.heart {
+  position: fixed;
+  bottom: -10px;
+  animation: float 7s linear forwards;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+@keyframes float {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+
+@media (max-width: 900px) {
+  .panel { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎧 MUSIC -->
+<audio id="bgm" loop preload="auto">
+  <source src="Say-You-Wont-Let-Go.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="clickSound">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_2e6cbb7c4d.mp3">
+</audio>
+
+<div class="story">
+
+  <!-- LANDING PAGE -->
+<div class="panel active" id="landing">
+  <div class="left">
+    <h1>💌 Hi, bb</h1>
+    <p>This website is made only for my lovely boyfriend.</p>
+    <p>No one else. Just you.</p>
+    <button onclick="goPassword()">continue →</button>
+  </div>
+  <div class="right"><h2 style="font-size:46px;">🎀</h2></div>
+</div>
+
+<!-- PASSWORD PAGE -->
+<div class="panel" id="passwordScreen">
+  <div class="left">
+    <h1>🔐 enter the password</h1>
+    <p>Hint: our special date in 2025</p>
+    <input id="passwordInput" type="password" placeholder="enter password..."
+      style="padding:12px 16px;border-radius:12px;border:1px solid #ddd;width:100%;margin-top:8px;font-size:14px;">
+    <p id="passwordError" style="color:#ff4d6d;margin-top:8px;display:none;">wrong password. try again, bb.</p>
+    <button onclick="checkPassword()">unlock →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">💗</h2></div>
+</div>
+
+<!-- LOADING PAGE -->
+<div class="panel" id="loadingScreen">
+  <div class="left">
+    <h1>📱 opening your special gift…</h1>
+    <p>Please wait. This part is made with love.</p>
+    <div id="loadingBar" style="margin-top:14px;height:12px;background:#ffd6e5;border-radius:99px;overflow:hidden;">
+      <div id="loadingFill" style="height:100%;width:0%;background:linear-gradient(135deg,#ff5c8a,#ff8fab);transition:0.3s;"></div>
+    </div>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">✨</h2></div>
+</div>
+
+<!-- GIFT REVEAL -->
+<div class="panel" id="giftReveal">
+  <div class="left">
+    <h1>🎁 surprise</h1>
+    <p>This is not just a website.</p>
+    <p>It’s a memory, a promise, and a piece of my heart.</p>
+    <p>Made only for you.</p>
+    <button onclick="go(1)">open gift →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">💝</h2></div>
+</div>
+
+<!-- FINAL OWNERSHIP PAGE -->
+<div class="panel" id="finalPage">
+  <div class="left">
+    <h1>💖 one last thing</h1>
+    <p>You can never return this gift.</p>
+    <p>It’s yours forever.</p>
+    <p>And so is a part of my heart.</p>
+    <button onclick="go(1)">go back home →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">🤍</h2></div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="panel" id="screen1">
+  <div class="left">
+    <h1>💗 hey bb, my lovely boy...</h1>
+    <p>This isn’t just a Valentine thing.
+    <p>This is a small piece of my heart — a reminder of us, our memories, and the love I choose every day.</p>
+    <p>No matter when you open this, I hope it reminds you that you are deeply loved.</p>
+    <button onclick="go(2)">start →</button>
+  </div>
+  <div class="right"><h2 style="font-size:46px;">💘</h2></div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="panel" id="screen2">
+  <div class="left">
+    <h1>🗓 since we last met</h1>
+    <p>The last time we saw each other was <b>January 16, 2026</b> but somehow, you’ve never felt far from me.</p>
+    <p>Distance might change our location, but it will never change how important you are to me.</p>
+    <div class="countdown" id="countdown"></div>
+
+    <p>Even if we’re far — we’re still us. Still in love.</p>
+    <button onclick="go(3)">next →</button>
+  </div>
+  <div class="right"><h2 style="font-size:42px;">⏳</h2></div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="panel" id="screen3">
+  <div class="left">
+    <h1>💬 us being us</h1>
+    <div class="chat-box">
+      <div class="msg me">bb, i miss you more than i say</div>
+      <div class="msg him">i can tell, you always love loudly</div>
+      <div class="msg me">i just don’t ever want to lose you</div>
+      <div class="msg him">you won’t. i’m staying</div>
+      <div class="msg me">promise we’ll grow, not driftt</div>
+      <div class="msg him">promise. we grow together</div>
+      <div class="msg me">i’m grateful it’s you 🤍</div>
+    </div>
+    <button onclick="go(4)">next →</button>
+  </div>
+  <div class="right"><h2 style="font-size:40px;">📱</h2></div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="panel" id="screen4">
+  <div class="left">
+    <h1>🫶 random things i love about you</h1>
+    <p>I love the way you make me feel safe without even trying.</p>
+    <p>I love how your presence calms my mind.</p>
+    <p>I love how you hold me, like I’m home.</p>
+    <p>I love our messy, chaotic, silly memories.</p>
+    <p>To other people, this might look simple.</p>
+    <p>but to me, <b>you’re one of the best parts of my life.</b></p>
+    <button onclick="go(5)">continue →</button>
+  </div>
+  <div class="right"><h2 style="font-size:40px;">✨</h2></div>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="panel" id="screen5">
+  <div class="left">
+    <h1>💌 last question</h1>
+    <p>Before we continue, answer honestly from your heart.</p>
+
+    <button onclick="goSecret()">I love you, always ❤️</button>
+    <button onclick="go(6)">You mean more than you think 🤍</button>
+  </div>
+  <div class="right"><h2 style="font-size:40px;">💖</h2></div>
+</div>
+
+<!-- SECRET -->
+<div class="panel" id="secret">
+  <div class="left">
+    <h1>💖 secret ending</h1>
+    <p>no matter the distance,</p>
+    <p>no matter the changes,</p>
+    <p>no matter how life evolves, </p>
+    <p>you will always be someone I choose.</p>
+    <p>Let’s grow through long distance.</p>
+    <p>Let’s stay gentle with each other.</p>
+    <p>Let’s protect what we have.</p>
+
+    <p><b>I love you deeply, bb.</b></p>
+    <p>— ur gf🤍</p>
+
+    <button onclick="go(6)">continue →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">💘</h2></div>
+</div>
+
+<!-- MENU -->
+<div class="panel" id="screen6">
+  <div class="left">
+    <h1>💗 These are little pieces of my heart.</h1>
+    <p>Open them whenever you need comfort, reassurance, or love. No matter what you’re feeling. I want you to feel less alone.</p>
+
+    <button onclick="go(7)">when you miss me</button>
+    <button onclick="go(8)">when we fight</button>
+    <button onclick="go(9)">when you feel insecure</button>
+    <button onclick="go(10)">when you worry about me</button>
+    <button onclick="go(11)">bad day? read this</button>
+
+    <button onclick="go(1)">← back to home</button>
+  </div>
+  <div class="right"><h2 style="font-size:40px;">🫶</h2></div>
+</div>
+
+<!-- SCREEN 7 -->
+<div class="panel" id="screen7">
+  <div class="left">
+    <h1>💌 when you miss me</h1>
+    <p>if you’re here, it means you miss me.</p>
+    <p>And I want you to know, I miss you too, more than words can explain.</p>
+    <p>Even when we’re apart, you live in my thoughts, my heart, and my prayers.</p>
+    <p>Take this as a long, warm hug from me, bb. 🫂</p>
+    <p><b>I love you — always.</b></p>
+    <button onclick="go(6)">back →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">🤍</h2></div>
+</div>
+
+<!-- SCREEN 8 -->
+<div class="panel" id="screen8">
+  <div class="left">
+    <h1>💔 If we ever fight, remember this:</h1>
+    <p>I’m not trying to defeat you.</p>
+    <p>You’re not my enemy, you’re my partner, my comfort, my safe place.</p>
+    <p>Let’s choose calm over ego.</p>
+    <p>Let’s choose love over pride.</p>
+    <p><b>We’re a team. Always.</b></p>
+    <button onclick="go(6)">back →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">🤍</h2></div>
+</div>
+
+<!-- SCREEN 9 -->
+<div class="panel" id="screen9">
+  <div class="left">
+    <h1>🪞 when you feel insecure</h1>
+    <p>If you ever doubt yourself, let me remind you of something important:</p>
+    <p>You are enough, exactly as you are.</p>
+    <p>You are worthy of love.</p>
+    <p>You are someone I chose intentionally.</p>
+    <p>I didn’t choose you by accident.</p>
+    <p><b>I chose you because I want you, wholeheartedly.</b></p>
+    <button onclick="go(6)">back →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">✨</h2></div>
+</div>
+
+<!-- SCREEN 10 -->
+<div class="panel" id="screen10">
+  <div class="left">
+    <h1>🫂 when you worry about me</h1>
+    <p>If you’re worried about me, thank you. it means you care deeply.</p>
+    <p>I promise to take care of myself and to tell you when I’m not okay.</p>
+    <p><b>You don’t need to overthink. I’m still here. And I still choose you.</b></p>
+    <button onclick="go(6)">back →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">💗</h2></div>
+</div>
+
+<!-- SCREEN 11 -->
+<div class="panel" id="screen11">
+  <div class="left">
+    <h1>🌧 bad day? read this</h1>
+    <p>If today feels heavy, pause for a moment. you don’t have to carry everything alone.</p>
+    <p>You are allowed to feel tired.</p>
+    <p>You are allowed to rest.</p>
+    <p>You are allowed to go slow.</p>
+    <p>Even on your hardest days, I am proud of you.</p>
+    <p><b>Come back here whenever you need comfort. I’ll always be on your side.</b></p>
+    <button onclick="go(6)">back →</button>
+  </div>
+  <div class="right"><h2 style="font-size:44px;">☁️</h2></div>
+</div>
+
+</div>
+
+<script>
+
+function goPassword() {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("passwordScreen").classList.add("active");
+}
+
+function checkPassword() {
+  const input = document.getElementById("passwordInput").value;
+  const error = document.getElementById("passwordError");
+
+  if (input === "111225") {
+    error.style.display = "none";
+    startLoading();
+  } else {
+    error.style.display = "block";
+  }
+}
+
+function startLoading() {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("loadingScreen").classList.add("active");
+
+  let progress = 0;
+  const bar = document.getElementById("loadingFill");
+
+  const interval = setInterval(() => {
+    progress += 5;
+    bar.style.width = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("giftReveal").classList.add("active");
+    }
+  }, 80);
+}
+
+function go(n) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("screen" + n)?.classList.add("active");
+  document.getElementById("clickSound").play();
+}
+
+function goSecret() {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("secret").classList.add("active");
+}
+
+// Countdown
+const startDate = new Date("2026-01-16T00:00:00");
+
+function updateCountdown() {
+  const now = new Date();
+  const diff = now - startDate;
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+  document.getElementById("countdown").innerText =
+    `${days} days, ${hours} hours, ${minutes} minutes since we last met 💗`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// Floating hearts
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = Math.random() > 0.5 ? "💖" : "💗";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (14 + Math.random() * 22) + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 7000);
+}, 350);
+
+// Start music on click
+const bgm = document.getElementById("bgm");
+bgm.volume = 0.7;
+
+function startMusic() {
+  bgm.play().catch(() => {});
+  document.removeEventListener("click", startMusic);
+  document.removeEventListener("touchstart", startMusic);
+}
+
+document.addEventListener("click", startMusic);
+document.addEventListener("touchstart", startMusic);
+</script>
+
+</body>
+</html>
